@@ -1,5 +1,8 @@
-students = []
-
+students = [
+    {"id": 1, "name": "Ousman", "email": "ousman@ism.edu.sn"},
+    {"id": 2, "name": "Kazi OTP", "email": "kazi@ism.edu.sn"},
+    {"id": 3, "name": "Fadil", "email": "fadil@ism.edu.sn"},
+]
 
 def add_student(name, email):
     new_id = len(students) + 1

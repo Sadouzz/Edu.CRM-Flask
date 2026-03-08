@@ -1,0 +1,58 @@
+<nav class="sticky top-0 z-50 bg-white border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16">
+            <div class="flex items-center">
+                <a href="{{ url_for('dashboard.index') }}" class="flex items-center gap-2">
+                    <div class="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
+                        <i class="fa-solid fa-graduation-cap text-white text-sm"></i>
+                    </div>
+                    <span class="text-xl font-bold text-primary-600">Edu.CRM</span>
+                </a>
+
+                <div class="hidden md:flex ml-10 space-x-4">
+                    <a href="{{ url_for('dashboard.index') }}"
+                       class="{% if request.path == url_for('dashboard.index') %}bg-primary-500 text-white{% else %}text-gray-700 hover:bg-gray-100{% endif %} px-3 py-2 rounded-md text-sm font-medium">
+                        Dashboard
+                    </a>
+
+                    <a href="{{ url_for('students.index') }}"
+                       class="{% if request.path.startswith('/students') %}bg-primary-500 text-white{% else %}text-gray-700 hover:bg-gray-100{% endif %} px-3 py-2 rounded-md text-sm font-medium">
+                        Étudiants
+                    </a>
+
+                    <a href="{{ url_for('teachers.index') }}"
+                       class="{% if request.path.startswith('/teachers') %}bg-primary-500 text-white{% else %}text-gray-700 hover:bg-gray-100{% endif %} px-3 py-2 rounded-md text-sm font-medium">
+                        Enseignants
+                    </a>
+
+                    <a href="{{ url_for('courses.index') }}"
+                       class="{% if request.path.startswith('/courses') %}bg-primary-500 text-white{% else %}text-gray-700 hover:bg-gray-100{% endif %} px-3 py-2 rounded-md text-sm font-medium">
+                        Cours
+                    </a>
+                </div>
+            </div>
+
+            <div class="flex items-center">
+                {% if session.user %}
+                <div class="flex items-center gap-4">
+                    <span class="text-sm font-medium text-gray-700">
+                        <i class="fa-solid fa-user mr-1 text-primary-600"></i>
+                        {% if session.user is mapping and session.user.name %}
+                            {{ session.user.name }}
+                        {% else %}
+                            {{ session.user }}
+                        {% endif %}
+                    </span>
+                    <a href="{{ url_for('auth.logout') }}" class="text-sm text-red-600 hover:text-red-800">
+                        <i class="fa-solid fa-sign-out-alt"></i>
+                    </a>
+                </div>
+                {% else %}
+                <a href="{{ url_for('auth.login') }}" class="text-sm text-primary-600 hover:text-primary-700">
+                    <i class="fa-solid fa-sign-in-alt mr-1"></i> Connexion
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</nav>

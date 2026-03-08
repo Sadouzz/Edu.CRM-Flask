@@ -1,4 +1,8 @@
-teachers = []
+teachers = [
+    {"id": 1, "name": "M. Diallo", "email": "m.diallo@school.com", "speciality": "Mathématiques"},
+    {"id": 2, "name": "Mme Martin", "email": "m.martin@school.com", "speciality": "Physique"},
+    {"id": 3, "name": "Mme Bernard", "email": "m.bernard@school.com", "speciality": "Chimie"}
+]
 
 
 def add_teacher(name, email, speciality):

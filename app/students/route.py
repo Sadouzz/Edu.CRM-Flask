@@ -10,20 +10,23 @@ def index():
     students = list_students()
     return render_template("students/list.html", students=students)
 
-@students_bp.route("/create", methods=["POST"])
+@students_bp.route("/create", methods=["GET", "POST"])
 @login_required
 def create():
-    name = request.form.get("name")
-    email = request.form.get("email")
+    if request.method == "POST":
+        name = request.form.get("name")
+        email = request.form.get("email")
 
-    if not name or not email:
-        flash("Tous les champs sont obligatoires", "danger")
+        if not name or not email:
+            flash("Tous les champs sont obligatoires", "danger")
+            return redirect(url_for("students.create"))
+
+        add_student(name, email)
+        flash("Étudiant ajouté avec succès", "success")
         return redirect(url_for("students.index"))
-
-    add_student(name, email)
-    flash("Étudiant ajouté avec succès", "success")
-
-    return redirect(url_for("students.index"))
+    
+    
+    return render_template("students/create.html")
 
 @students_bp.route("/delete/<int:id>")
 @login_required

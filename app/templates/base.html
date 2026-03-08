@@ -1,25 +1,40 @@
-<!DOCTYPE html>
-<html>
+﻿<!DOCTYPE html>
+<html lang="fr">
 <head>
-    <title>EduCRM</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edu.CRM - {% block title %}{% endblock %}</title>
+    <link href="{{ url_for('static', filename='css/output.css') }}" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body>
+<body class="bg-gray-50 font-sans antialiased min-h-screen flex flex-col">
 
-<nav>
-    <a href="{{ url_for('dashboard.index') }}">Dashboard</a>
-    <a href="{{ url_for('students.index') }}">Students</a>
-    <a href="{{ url_for('teachers.index') }}">Teachers</a>
-    <a href="{{ url_for('courses.index') }}">Courses</a>
-    <a href="{{ url_for('auth.logout') }}">Logout</a>
-</nav>
+    {% include 'partials/_navbar.html' %}
 
-{% with messages = get_flashed_messages(with_categories=true) %}
-  {% for category, message in messages %}
-      <p>{{ message }}</p>
-  {% endfor %}
-{% endwith %}
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        {% include 'partials/_flash_messages.html' %}
+    </div>
 
-{% block content %}{% endblock %}
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {% block content %}{% endblock %}
+    </main>
 
+    {% include 'partials/_footer.html' %}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const flashMessages = document.querySelectorAll('.animate-fade-in');
+            flashMessages.forEach(function(message) {
+                setTimeout(function() {
+                    message.style.transition = 'opacity 0.5s ease';
+                    message.style.opacity = '0';
+                    setTimeout(function() {
+                        message.remove();
+                    }, 500);
+                }, 1000);
+            });
+        });
+    </script>
 </body>
 </html>

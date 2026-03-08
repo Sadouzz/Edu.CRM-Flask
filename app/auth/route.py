@@ -11,7 +11,7 @@ def login():
         password = request.form.get("password")
 
         if username == "admin" and password == "1234":
-            session["user"] = username
+            session["user"] = {"name": username, "id": 1}
             flash("Connexion réussie", "success")
             return redirect(url_for("dashboard.index"))
         else:
