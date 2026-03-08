@@ -1,51 +1,35 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
-from app.services.teacher_service import (
-    list_teachers,
-    add_teacher,
-    delete_teacher
-)
+from app.services.teacher_service import *
+from app.auth.route import login_required
 
-teachers_bp = Blueprint(
-    "teachers",
-    __name__,
-    url_prefix="/teachers"
-)
-
+teachers_bp = Blueprint("teachers", __name__, url_prefix="/teachers")
 
 @teachers_bp.route("/")
-def teachers_list():
+@login_required
+def index():
     teachers = list_teachers()
-
     return render_template("teachers/list.html", teachers=teachers)
 
 
-@teachers_bp.route("/create", methods=["GET", "POST"])
-def create_teacher():
+@teachers_bp.route("/create", methods=["POST"])
+@login_required
+def create():
+    name = request.form.get("name")
+    email = request.form.get("email")
+    speciality = request.form.get("speciality")
 
-    if request.method == "POST":
+    if not name or not email or not speciality:
+        flash("Tous les champs sont obligatoires", "danger")
+        return redirect(url_for("teachers.index"))
 
-        name = request.form.get("name")
-        email = request.form.get("email")
-        speciality = request.form.get("speciality")
+    add_teacher(name, email, speciality)
+    flash("Enseignant ajouté avec succès", "success")
 
-        if not name or not email or not speciality:
-            flash("All fields are required", "error")
-            return redirect(url_for("teachers.create_teacher"))
-
-        add_teacher(name, email, speciality)
-
-        flash("Teacher added successfully", "success")
-
-        return redirect(url_for("teachers.teachers_list"))
-
-    return render_template("teachers/create.html")
-
+    return redirect(url_for("teachers.index"))
 
 @teachers_bp.route("/delete/<int:id>")
-def delete_teacher_route(id):
-
+@login_required
+def delete(id):
     delete_teacher(id)
-
-    flash("Teacher deleted successfully", "success")
-
-    return redirect(url_for("teachers.teachers_list"))
+    flash("Enseignant supprimé", "info")
+    return redirect(url_for("teachers.index"))
