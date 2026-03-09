@@ -1,4 +1,8 @@
-students = []
+students = [
+    {"id": 1, "name": "Alice Dupont", "email": "alice@educrm.com"},
+    {"id": 2, "name": "Jean Martin", "email": "jean@educrm.com"},
+    {"id": 3, "name": "Fatou Ndiaye", "email": "fatou@educrm.com"}
+]
 
 
 def add_student(name, email):

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+
+<div class="dashboard-container">
+
+    <h1 class="dashboard-title">Dashboard EDU CRM</h1>
+
+    <div class="cards">
+
+        <div class="card students">
+            <h2>Students</h2>
+            <p class="number">{{ total_students }}</p>
+        </div>
+
+        <div class="card teachers">
+            <h2>Teachers</h2>
+            <p class="number">{{ total_teachers }}</p>
+        </div>
+
+        <div class="card courses">
+            <h2>Courses</h2>
+            <p class="number">{{ total_courses }}</p>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

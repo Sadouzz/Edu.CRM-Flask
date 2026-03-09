@@ -1,4 +1,8 @@
-courses = []
+courses = [
+    {"id": 1, "title": "Mathématiques", "teacher_id": 1, "student_ids": [1, 2]},
+    {"id": 2, "title": "Physique", "teacher_id": 2, "student_ids": [2, 3]},
+    {"id": 3, "title": "Informatique", "teacher_id": 3, "student_ids": [1, 3]}
+]
 
 from app.services.teacher_service import list_teachers
 from app.services.student_service import get_student_by_id
