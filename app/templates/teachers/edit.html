@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Modifier l'étudiant{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <div class="mb-6">
+        <div class="flex items-center gap-3">
+            <a href="{{ url_for('students.students_list') }}" class="text-gray-500 hover:text-primary-600">
+                <i class="fa-solid fa-arrow-left"></i>
+            </a>
+            <h1 class="text-3xl font-bold">Modifier l'enseignant</h1>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div class="h-2 bg-gradient-to-r from-primary-500 to-primary-600"></div>
+        <form method="POST" class="p-6 space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Nom complet</label>
+                <input type="text" name="name" value="{{ teacher.name }}" required
+                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <input type="email" name="email" value="{{ teacher.email }}" required
+                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500">
+            </div>
+
+            <div class="flex gap-3 pt-4">
+                <button type="submit" class="flex-1 py-2 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700">
+                    Mettre à jour
+                </button>
+                <a href="{{ url_for('teachers.teachers_list') }}" class="flex-1 py-2 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 text-center">
+                    Annuler
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
