@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>EduCRM</title>
+
+    <!-- Lien vers ton fichier CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header>
+        <h1>EduCRM</h1>
+    </header>
+
+    <!-- NAVBAR -->
+    <nav>
+        <a href="{{ url_for('dashboard.dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('students.students_list') }}">Students</a>
+        <a href="{{ url_for('teachers.teachers_list') }}">Teachers</a>
+        <a href="{{ url_for('courses.courses_list') }}">Courses</a>
+        <a href="{{ url_for('auth.profile') }}">Profile</a>
+        <a href="{{ url_for('auth.logout') }}">Logout</a>
+    </nav>
+
+    <!-- CONTENU -->
+    <div class="container">
+
+        <!-- FLASH MESSAGES -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- CONTENU DES PAGES -->
+        <div class="card">
+            {% block content %}
+            {% endblock %}
+        </div>
+
+    </div>
+
+</body>
+
+</html>

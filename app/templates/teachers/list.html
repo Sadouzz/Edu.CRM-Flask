@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Teachers</h2>
+
+<a href="{{ url_for('teachers.create_teacher') }}">Add Teacher</a>
+
+<table border="1">
+
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Speciality</th>
+        <th>Action</th>
+    </tr>
+
+    {% for teacher in teachers %}
+
+    <tr>
+
+        <td>{{ teacher.id }}</td>
+        <td>{{ teacher.name }}</td>
+        <td>{{ teacher.email }}</td>
+        <td>{{ teacher.speciality }}</td>
+
+        <td>
+            <a href="{{ url_for('teachers.delete_teacher_route', id=teacher.id) }}">
+                Delete
+            </a>
+        </td>
+
+    </tr>
+
+    {% endfor %}
+
+</table>
+
+{% endblock %}

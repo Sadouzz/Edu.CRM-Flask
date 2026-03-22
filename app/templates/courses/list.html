@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Courses</h2>
+
+<a href="{{ url_for('courses.create_course') }}">
+    Create Course
+</a>
+
+<br><br>
+
+<table border="1">
+
+    <tr>
+        <th>ID</th>
+        <th>Title</th>
+        <th>Teacher ID</th>
+        <th>Students</th>
+        <th>Actions</th>
+    </tr>
+
+    {% for course in courses %}
+
+    <tr>
+
+        <td>{{ course.id }}</td>
+
+        <td>{{ course.title }}</td>
+
+        <td>{{ course.teacher_id }}</td>
+
+        <td>{{ course.student_ids|length }}</td>
+
+        <td>
+
+            <a href="{{ url_for('courses.course_details', course_id=course.id) }}">Details</a> |
+
+            <a href="{{ url_for('courses.assign_student', course_id=course.id) }}">
+                Assign Student
+            </a>
+
+            |
+
+            <a href="{{ url_for('courses.remove_course', id=course.id) }}">
+                Delete
+            </a>
+
+        </td>
+
+    </tr>
+
+    {% endfor %}
+
+</table>
+
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Liste des étudiants</h2>
+
+<form method="POST" action="{{ url_for('students.create_student') }}">
+
+    <input type="text" name="name" placeholder="Nom" required>
+    <input type="email" name="email" placeholder="Email" required>
+
+    <button type="submit">Ajouter</button>
+
+</form>
+
+<hr>
+
+<table border="1">
+
+    <tr>
+        <th>ID</th>
+        <th>Nom</th>
+        <th>Email</th>
+        <th>Action</th>
+    </tr>
+
+    {% for student in students %}
+
+    <tr>
+
+        <td>{{student.id}}</td>
+        <td>{{student.name}}</td>
+        <td>{{student.email}}</td>
+
+        <td>
+            <a href="{{ url_for('students.remove_student', id=student.id) }}">
+                Supprimer
+            </a>
+        </td>
+
+    </tr>
+
+    {% endfor %}
+
+</table>
+
+{% endblock %}

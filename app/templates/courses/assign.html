@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Assign Student to Course: {{ course.title }}</h2>
+
+<form action="{{ url_for('courses.assign_student', course_id=course.id) }}" method="post">
+
+    <label>Select Student</label>
+    <br>
+
+    <select name="student_id" required>
+        {% for student in students %}
+        <option value="{{ student.id }}">{{ student.name }}</option>
+        {% endfor %}
+    </select>
+
+    <br><br>
+    <button type="submit">Assign Student</button>
+    <a href="{{ url_for('courses.courses_list') }}">Cancel</a>
+
+</form>
+
+{% endblock %}
