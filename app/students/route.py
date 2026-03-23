@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from app.services.student_service import *
-from app.auth.route import login_required
+from app.auth.decorators import login_required, role_required
 
 students_bp = Blueprint("students", __name__)
 

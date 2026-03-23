@@ -1,41 +1,39 @@
-from flask import Blueprint, render_template, request, redirect, url_for, session, flash
-from functools import wraps
+from flask import Blueprint, render_template, request, redirect, session, flash
+from .service import authenticate
+from .decorators import login_required
+from app.models import User
 
-auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
+auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 
-USER = {
-    "username": "admin",
-    "password": "admin"
-}
-
-@auth_bp.route("/login", methods=["GET", "POST"])
+@auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
-    if request.method == "POST":
-        username = request.form.get("username")
-        password = request.form.get("password")
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
 
-        if username == USER["username"] and password == USER["password"]:
-            session["user"] = username
-            flash("Connexion réussie", "success")
-            return redirect(url_for("dashboard.dashboard"))
+        user = authenticate(email, password)
+
+        if user:
+            session['user_id'] = user.id
+            session['role'] = user.role
+
+            flash("Connexion réussie")
+            return redirect('/')
         else:
-            flash("Nom d'utilisateur ou mot de passe incorrect", "danger")
-    return render_template("auth/login.html")
+            flash("Identifiants incorrects")
+
+    return render_template('auth/login.html')
 
 
-@auth_bp.route("/logout")
+@auth_bp.route('/logout')
 def logout():
     session.clear()
-    flash("Déconnexion réussie", "info")
-    return redirect(url_for("auth.login"))
+    flash("Déconnecté")
+    return redirect('/auth/login')
 
-
-def login_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if "user" not in session:
-            flash("Veuillez vous connecter", "warning")
-            return redirect(url_for("auth.login"))
-        return f(*args, **kwargs)
-    return decorated_function
+@auth_bp.route('/profile')
+@login_required
+def profile():
+    user = User.query.get(session['user_id'])
+    return render_template('auth/profile.html', user=user)

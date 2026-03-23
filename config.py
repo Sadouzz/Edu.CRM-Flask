@@ -9,6 +9,7 @@ class Config:
     FLASK_ENV = os.getenv('FLASK_ENV', 'development')
     FLASK_DEBUG = os.getenv('FLASK_DEBUG', 'True') == 'True'
     FLASK_APP = os.getenv('FLASK_APP', 'app.py')
+    SECRET_KEY = os.getenv('SECRET_KEY', '')
     DEBUG = FLASK_DEBUG
 
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')

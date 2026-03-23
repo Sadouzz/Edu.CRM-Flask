@@ -37,12 +37,12 @@
                     🌙
                 </button>
 
-                {% if session.user %}
+                {% if session.user_id %}
                 <div class="flex items-center gap-4">
-                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
-                        <i class="fa-solid fa-user mr-1 text-primary-600 dark:text-primary-400"></i>
-                        {{ session.user }}
-                    </span>
+                    <a href="{{ url_for('auth.profile') }}" 
+                       class="text-sm text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+                        <i class="fa-solid fa-user mr-1"></i>Mon Profil
+                    </a>
                     <a href="{{ url_for('auth.logout') }}" 
                        class="text-sm text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 transition-colors">
                         <i class="fa-solid fa-sign-out-alt mr-1"></i>Déconnexion
