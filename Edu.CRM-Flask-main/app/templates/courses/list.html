@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Courses</h2>
+
+<a href="{{ url_for('courses.create_course') }}">Create Course</a>
+
+<br><br>
+
+<!-- Barre de recherche -->
+<form method="GET" action="{{ url_for('courses.courses_list') }}" style="margin-bottom: 20px;">
+    <input type="text" name="search" placeholder="Rechercher par titre..." value="{{ search }}" style="padding: 5px; width: 300px;">
+    <button type="submit" style="padding: 5px 10px;">Rechercher</button>
+    {% if search %}
+        <a href="{{ url_for('courses.courses_list') }}">Effacer</a>
+    {% endif %}
+</form>
+
+<table border="1" style="width: 100%; border-collapse: collapse;">
+    <thead>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Teacher</th>
+            <th>Students</th>
+            <th>Actions</th>
+         </thead>
+    <tbody>
+        {% for course in courses %}
+            <td>{{ course.id }}</td>
+            <td>{{ course.title }}</td>
+            <td>{{ course.teacher_name }}</td>
+            <td>{{ course.student_count }}</td>
+            <td>
+                <a href="{{ url_for('courses.course_details', course_id=course.id) }}">Details</a>
+                
+                {% if session.role == 'admin' %}
+                    | <a href="{{ url_for('courses.edit_course', id=course.id) }}">Edit</a>
+                    | <a href="#" data-id="{{ course.id }}" data-title="{{ course.title }}" 
+                    onclick="return confirmDeleteCourse(this)">
+                        Delete
+                    </a>
+                {% elif session.role == 'teacher' %}
+                    | <span style="color: gray;">Read only</span>
+                {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+        
+        {% if not courses %}
+          <tr>
+            <td colspan="5" style="text-align: center;">Aucun cours trouvé</td>
+          </tr>
+        {% endif %}
+    </tbody>
+</table>
+
+<!-- Pagination -->
+{% if total_pages > 1 %}
+<div style="margin-top: 20px; text-align: center;">
+    {% if page > 1 %}
+        <a href="{{ url_for('courses.courses_list', page=page-1, search=search) }}">« Précédent</a>
+    {% endif %}
+    
+    Page {{ page }} / {{ total_pages }}
+    
+    {% if page < total_pages %}
+        <a href="{{ url_for('courses.courses_list', page=page+1, search=search) }}">Suivant »</a>
+    {% endif %}
+</div>
+{% endif %}
+
+<script>
+function confirmDeleteCourse(element) {
+    var id = element.getAttribute('data-id');
+    var title = element.getAttribute('data-title');
+    
+    if (confirm("Êtes-vous sûr de vouloir supprimer le cours \"" + title + "\" ?\n\n⚠️ Cette action supprimera également toutes les inscriptions des étudiants.")) {
+        window.location.href = "/courses/delete/" + id;
+        return true;
+    }
+    return false;
+}
+</script>
+
+{% endblock %}

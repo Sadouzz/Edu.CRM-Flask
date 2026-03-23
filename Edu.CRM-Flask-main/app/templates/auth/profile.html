@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Mon Profil</h2>
+
+<div class="profile-card" style="border: 1px solid #ccc; padding: 20px; border-radius: 8px; max-width: 400px;">
+    <p><strong>Nom :</strong> {{ user.name }}</p>
+    <p><strong>Email :</strong> {{ user.email }}</p>
+    <p><strong>Rôle :</strong>
+        <span style="background-color: #e0e0e0; padding: 2px 8px; border-radius: 4px;">
+            {{ user.role | capitalize }}
+        </span>
+    </p>
+
+    <hr>
+
+    {% if user.role == 'teacher' %}
+    <h3>Informations Enseignant</h3>
+    <p><strong>Spécialité :</strong> {{ user.teacher.speciality if user.teacher else "Non spécifiée" }}</p>
+    {% elif user.role == 'student' %}
+    <h3>Informations Étudiant</h3>
+    <p><strong>Nombre de cours suivis :</strong> {{ user.student.assignments | length if user.student else 0 }}</p>
+    {% endif %}
+</div>
+
+<p style="margin-top: 20px;">
+    <a href="{{ url_for('auth.logout') }}" style="color: red;">Se déconnecter</a>
+</p>
+{% endblock %}

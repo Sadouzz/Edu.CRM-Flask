@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduCRM - Education Management System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>📚 EduCRM</h1>
+        <p>Education Management System</p>
+    </header>
+
+    <nav>
+        <div class="nav-links">
+            <a href="{{ url_for('dashboard.dashboard') }}">🏠 Dashboard</a>
+            
+            {% if session.role in ['admin', 'teacher'] %}
+                <a href="{{ url_for('students.students_list') }}">👨‍🎓 Students</a>
+                <a href="{{ url_for('teachers.teachers_list') }}">👩‍🏫 Teachers</a>
+            {% endif %}
+            
+            <a href="{{ url_for('courses.courses_list') }}">📖 Courses</a>
+            <a href="{{ url_for('auth.profile') }}">👤 Profile</a>
+            <a href="{{ url_for('auth.logout') }}">🚪 Logout</a>
+        </div>
+        
+        {% if session.role %}
+            <div class="user-info">
+                <span class="role-badge">{{ session.role|upper }}</span>
+            </div>
+        {% endif %}
+    </nav>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category if category else 'info' }} fade-in">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="content">
+        {% block content %}
+        {% endblock %}
+    </div>
+</div>
+
+<script>
+    // Auto-hide alerts after 5 seconds
+    setTimeout(function() {
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(function(alert) {
+            alert.style.opacity = '0';
+            setTimeout(function() {
+                alert.remove();
+            }, 300);
+        });
+    }, 5000);
+</script>
+
+</body>
+</html>

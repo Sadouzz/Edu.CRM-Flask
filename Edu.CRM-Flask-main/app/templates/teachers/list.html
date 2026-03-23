@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Teachers</h2>
+
+<a href="{{ url_for('teachers.create_teacher') }}">Add Teacher</a>
+
+<br><br>
+
+<!-- Barre de recherche -->
+<form method="GET" action="{{ url_for('teachers.teachers_list') }}" style="margin-bottom: 20px;">
+    <input type="text" name="search" placeholder="Rechercher par nom ou spécialité..." value="{{ search }}" style="padding: 5px; width: 300px;">
+    <button type="submit" style="padding: 5px 10px;">Rechercher</button>
+    {% if search %}
+        <a href="{{ url_for('teachers.teachers_list') }}">Effacer</a>
+    {% endif %}
+</form>
+
+<table border="1" style="width: 100%; border-collapse: collapse;">
+    <thead>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Speciality</th>
+            <th>Actions</th>
+         </thead>
+    <tbody>
+        {% for teacher in teachers %}
+          <tr>
+                <td>{{ teacher.id }}</td>
+                <td>{{ teacher.name }}</td>
+                <td>{{ teacher.email }}</td>
+                <td>{{ teacher.speciality }}</td>
+                <td>
+                        {% if session.role == 'admin' %}
+                            <a href="{{ url_for('teachers.edit_teacher', id=teacher.id) }}">Edit</a> |
+                            <a href="#" data-id="{{ teacher.id }}" data-name="{{ teacher.name }}" 
+                            onclick="return confirmDeleteTeacher(this)">
+                                Delete
+                            </a>
+                        {% else %}
+                            <span style="color: gray;">Read only</span>
+                        {% endif %}
+                </td>
+          </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Pagination -->
+{% if total_pages > 1 %}
+<div style="margin-top: 20px; text-align: center;">
+    {% if page > 1 %}
+        <a href="{{ url_for('teachers.teachers_list', page=page-1, search=search) }}">« Précédent</a>
+    {% endif %}
+    
+    Page {{ page }} / {{ total_pages }}
+    
+    {% if page < total_pages %}
+        <a href="{{ url_for('teachers.teachers_list', page=page+1, search=search) }}">Suivant »</a>
+    {% endif %}
+</div>
+{% endif %}
+
+<script>
+function confirmDeleteTeacher(element) {
+    var id = element.getAttribute('data-id');
+    var name = element.getAttribute('data-name');
+    
+    if (confirm("Êtes-vous sûr de vouloir supprimer l'enseignant \"" + name + "\" ?")) {
+        window.location.href = "/teachers/delete/" + id;
+        return true;
+    }
+    return false;
+}
+</script>
+
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Liste des enseignants</h2>
+
+<form method="POST" action="{{ url_for('teachers.create_teacher') }}">
+
+<input type="text" name="name" placeholder="Nom" required>
+<input type="email" name="email" placeholder="Email" required>
+<input type="text" name="speciality" placeholder="Spécialité" required>
+
+<button type="submit">Ajouter</button>
+
+</form>
+
+<hr>
+
+<table border="1">
+
+<tr>
+<th>ID</th>
+<th>Nom</th>
+<th>Email</th>
+<th>Spécialité</th>
+<th>Action</th>
+</tr>
+
+{% for teacher in teachers %}
+
+<tr>
+
+<td>{{teacher.id}}</td>
+<td>{{teacher.name}}</td>
+<td>{{teacher.email}}</td>
+<td>{{teacher.speciality}}</td>
+
+<td>
+<a href="{{ url_for('teachers.remove_teacher', id=teacher.id) }}">
+Supprimer
+</a>
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Course Details</h2>
+
+<p><strong>ID:</strong> {{ course.id }}</p>
+<p><strong>Title:</strong> {{ course.title }}</p>
+<p><strong>Teacher:</strong> {{ course.teacher_name }}</p>
+
+<h3>Enrolled Students ({{ course.student_count }})</h3>
+
+{% if session.role in ['admin', 'teacher'] %}
+    <a href="{{ url_for('courses.assign_student', course_id=course.id) }}">Assign Student</a>
+    <br><br>
+{% endif %}
+
+<br><br>
+
+<table border="1" style="width: 100%; border-collapse: collapse;">
+    <thead>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Action</th>
+         </thead>
+    <tbody>
+        {% for student in course.students %}
+          <tr>
+              <td>{{ student.id }}</td>
+              <td>{{ student.name }}</td>
+              <td>{{ student.email }}</td>
+              <td>
+                    {% if session.role in ['admin', 'teacher'] %}
+                        <a href="{{ url_for('courses.remove_student', course_id=course.id, student_id=student.id) }}" 
+                        onclick="return confirm('Retirer cet étudiant du cours ?')">
+                            Remove
+                        </a>
+                    {% endif %}
+              </td>
+          </tr>
+        {% endfor %}
+        
+        {% if not course.students %}
+          <tr>
+              <td colspan="4" style="text-align: center;">Aucun étudiant inscrit</td>
+          </tr>
+        {% endif %}
+    </tbody>
+</table>
+
+<br>
+<a href="{{ url_for('courses.courses_list') }}">Back to Courses</a>
+
+{% endblock %}

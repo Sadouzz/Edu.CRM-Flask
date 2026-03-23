@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="login-container">
+    <div class="login-card">
+        <h2>Connexion</h2>
+
+        <!-- Messages Flash -->
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="alert">
+            {% for message in messages %}
+            <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        <!-- Formulaire -->
+        <form method="POST">
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" name="email" placeholder="Entrez votre email" required>
+            </div>
+
+            <div class="form-group">
+                <label>Mot de passe</label>
+                <input type="password" name="password" placeholder="Entrez votre mot de passe" required>
+            </div>
+
+            <button type="submit">Se connecter</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

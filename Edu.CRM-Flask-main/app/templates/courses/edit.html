@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Edit Course</h2>
+
+<form method="POST" action="{{ url_for('courses.edit_course', id=course.id) }}">
+    <div style="margin-bottom: 10px;">
+        <label for="title">Title:</label><br>
+        <input type="text" id="title" name="title" value="{{ course.title }}" required style="width: 300px; padding: 5px;">
+    </div>
+    
+    <div style="margin-bottom: 10px;">
+        <label for="teacher_id">Teacher:</label><br>
+        <select id="teacher_id" name="teacher_id" required style="width: 300px; padding: 5px;">
+            {% for teacher in teachers %}
+                <option value="{{ teacher.id }}" {% if teacher.id == course.teacher_id %}selected{% endif %}>
+                    {{ teacher.name }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+    
+    <button type="submit" style="padding: 5px 15px;">Update</button>
+    <a href="{{ url_for('courses.courses_list') }}" style="margin-left: 10px;">Cancel</a>
+</form>
+
+{% endblock %}
