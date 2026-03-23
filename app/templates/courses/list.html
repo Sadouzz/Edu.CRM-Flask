@@ -17,11 +17,26 @@
         </a>
     </div>
 
-    <div class="relative">
-        <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"></i>
-        <input type="text" id="searchInput" placeholder="Rechercher un cours..."
-            class="w-full pl-8 pr-4 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white">
-    </div>
+    
+    <form method="GET" action="{{ url_for('courses.courses_list') }}" class="flex gap-2">
+        <div class="relative flex-1">
+            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"></i>
+            <input type="text" name="search" placeholder="Rechercher un cours par titre..."
+                value="{{ search }}"
+                class="w-full pl-8 pr-4 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white">
+        </div>
+        <button type="submit" 
+                class="px-4 py-1.5 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition-colors">
+            <i class="fa-solid fa-search mr-1"></i>
+            Rechercher
+        </button>
+        {% if search %}
+        <a href="{{ url_for('courses.courses_list') }}" 
+        class="px-4 py-1.5 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
+            Effacer
+        </a>
+        {% endif %}
+    </form>
 
     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
         <table class="w-full">
@@ -50,7 +65,7 @@
                                 Détails
                             </a>
 
-                            <a href="{{ url_for('courses.assign_student', course_id=course.id) }}"
+                            <a href="{{ url_for('courses.assign_students', course_id=course.id) }}"
                             class="flex items-center text-green-600 dark:text-green-400 hover:text-green-800 dark:hover:text-green-300 transition">
                                 Assigner
                             </a>
@@ -81,12 +96,27 @@
             </tbody>
         </table>
     </div>
+
+    {% if total_pages > 1 %}
     <div class="flex justify-center gap-2 mt-4">
-        <button class="px-3 py-1 border rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 dark:border-gray-600 dark:text-gray-300">Précédent</button>
-        <button class="px-3 py-1 bg-primary-600 text-white rounded-lg">1</button>
-        <button class="px-3 py-1 border rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 dark:border-gray-600 dark:text-gray-300">2</button>
-        <button class="px-3 py-1 border rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 dark:border-gray-600 dark:text-gray-300">3</button>
-        <button class="px-3 py-1 border rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 dark:border-gray-600 dark:text-gray-300">Suivant</button>
+        {% if page > 1 %}
+        <a href="{{ url_for('courses.courses_list', page=page-1, search=search) }}" 
+        class="px-3 py-1 border rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 dark:border-gray-600 dark:text-gray-300 transition">
+            Précédent
+        </a>
+        {% endif %}
+        
+        <span class="px-3 py-1 text-gray-700 dark:text-gray-300">
+            Page {{ page }} / {{ total_pages }}
+        </span>
+        
+        {% if page < total_pages %}
+        <a href="{{ url_for('courses.courses_list', page=page+1, search=search) }}" 
+        class="px-3 py-1 border rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 dark:border-gray-600 dark:text-gray-300 transition">
+            Suivant
+        </a>
+        {% endif %}
     </div>
+    {% endif %}
 </div>
 {% endblock %}

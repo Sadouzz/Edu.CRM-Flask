@@ -65,7 +65,7 @@
                 <div>
                     <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Spécialité</dt>
                     <dd class="text-base text-gray-900 dark:text-white mt-1">
-                        {{ user.teacher.speciality if user.teacher else 'Non spécifiée' }}
+                        {{ teacher.speciality if teacher else 'Non spécifiée' }}
                     </dd>
                 </div>
             </div>
@@ -78,7 +78,7 @@
                 <div>
                     <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Cours suivis</dt>
                     <dd class="text-base text-gray-900 dark:text-white mt-1">
-                        {{ user.student.assignments|length if user.student else 0 }} cours
+                        {{ student.assignments|length if student else 0 }} cours
                     </dd>
                 </div>
             </div>

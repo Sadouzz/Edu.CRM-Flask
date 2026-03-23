@@ -21,7 +21,7 @@
     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
         <div class="h-2 bg-gradient-to-r from-primary-500 to-primary-600"></div>
         
-        <form method="POST" action="{{ url_for('courses.assign_student', course_id=course.id) }}">
+        <form method="POST" action="{{ url_for('courses.assign_students', course_id=course.id) }}">
             <div class="p-6">
                 <div class="flex items-center justify-between mb-4">
                     <label class="text-sm font-semibold text-gray-700 dark:text-gray-300">
