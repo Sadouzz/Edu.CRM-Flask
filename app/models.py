@@ -31,6 +31,9 @@ class Course(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(150), nullable=False)
     teacher_id = db.Column(db.Integer, db.ForeignKey('teachers.id'), nullable=False)
+    jour = db.Column(db.String(20))   # Ajouté
+    heure = db.Column(db.String(10))  # Ajouté
+    statut = db.Column(db.String(20), default="Planifié") # Ajouté
     
     # Relation vers les assignations
     assignments = db.relationship('CourseAssignment', back_populates='course')

@@ -3,7 +3,7 @@
 {% block content %}
 <h2>Mon Profil</h2>
 
-<div class="profile-card" style="border: 1px solid #ccc; padding: 20px; border-radius: 8px; max-width: 400px;">
+<div class="profile-card" style="border: 1px solid #ccc; padding: 20px; border-radius: 8px; max-width: 600px;">
     <p><strong>Nom :</strong> {{ user.name }}</p>
     <p><strong>Email :</strong> {{ user.email }}</p>
     <p><strong>Rôle :</strong>
@@ -14,12 +14,52 @@
 
     <hr>
 
-    {% if user.role == 'teacher' %}
+    {# --- VUE ENSEIGNANT --- #}
+    {% if user.role == 'teacher' and teacher %}
     <h3>Informations Enseignant</h3>
-    <p><strong>Spécialité :</strong> {{ user.teacher.speciality if user.teacher else "Non spécifiée" }}</p>
-    {% elif user.role == 'student' %}
+    <p><strong>Spécialité :</strong> {{ teacher.speciality or "Non spécifiée" }}</p>
+
+    <h4>Mes Cours :</h4>
+    <ul>
+        {% for course in teacher.courses %}
+        <li>
+            <strong>{{ course.title }}</strong>
+            ({{ course.jour }} à {{ course.heure }}) -
+            <span>{{ course.statut }}</span>
+        </li>
+        {% else %}
+        <li>Vous n'avez aucun cours assigné.</li>
+        {% endfor %}
+    </ul>
+
+    {# --- VUE ÉTUDIANT --- #}
+    {% elif user.role == 'student' and student %}
     <h3>Informations Étudiant</h3>
-    <p><strong>Nombre de cours suivis :</strong> {{ user.student.assignments | length if user.student else 0 }}</p>
+    <h4>Mes Inscriptions :</h4>
+    <table border="1" style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+        <thead>
+            <tr style="background-color: #f2f2f2;">
+                <th>Cours</th>
+                <th>Jour</th>
+                <th>Heure</th>
+                <th>Statut</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for assign in student.assignments %}
+            <tr>
+                <td>{{ assign.course.title }}</td>
+                <td>{{ assign.course.jour }}</td>
+                <td>{{ assign.course.heure }}</td>
+                <td>{{ assign.course.statut }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="4" style="text-align: center;">Aucun cours suivi.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
     {% endif %}
 </div>
 

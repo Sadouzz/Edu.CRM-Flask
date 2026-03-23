@@ -1,57 +1,64 @@
 {% extends "base.html" %}
 
 {% block content %}
-
 <h2>Courses</h2>
 
-<a href="{{ url_for('courses.create_course') }}">
-    Create Course
-</a>
+<form method="GET" action="{{ url_for('courses.courses_list') }}" style="margin-bottom: 15px;">
+    <input type="text" name="search" placeholder="Search course title..." value="{{ search }}">
+    <button type="submit">Search</button>
+</form>
 
+<a href="{{ url_for('courses.create_course') }}">Create Course</a>
 <br><br>
 
 <table border="1">
-
     <tr>
-        <th>ID</th>
+        <th>Prof</th>
         <th>Title</th>
-        <th>Teacher ID</th>
+        <th>Jour</th>
+        <th>Heure</th>
+        <th>Statut</th>
         <th>Students</th>
         <th>Actions</th>
     </tr>
 
     {% for course in courses %}
-
     <tr>
-
-        <td>{{ course.id }}</td>
-
+        <td>{{ course.teacher_name }}</td>
         <td>{{ course.title }}</td>
-
-        <td>{{ course.teacher_id }}</td>
-
-        <td>{{ course.student_ids|length }}</td>
-
+        <td>{{ course.jour or "—" }}</td>
+        <td>{{ course.heure or "—" }}</td>
         <td>
-
-            <a href="{{ url_for('courses.course_details', course_id=course.id) }}">Details</a> |
-
-            <a href="{{ url_for('courses.assign_student', course_id=course.id) }}">
-                Assign Student
-            </a>
-
-            |
-
-            <a href="{{ url_for('courses.remove_course', id=course.id) }}">
-                Delete
-            </a>
-
+            <form method="POST" action="{{ url_for('courses.changer_statut', course_id=course.id) }}">
+                <select name="statut" onchange="this.form.submit()">
+                    {% for s in ["Planifié", "En cours", "Terminé"] %}
+                    <option value="{{ s }}" {% if course.statut==s %}selected{% endif %}>
+                        {{ s }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </form>
         </td>
-
+        <td>{{ course.student_ids|length }}</td>
+        <td>
+            <a href="{{ url_for('courses.course_details', course_id=course.id) }}">Details</a> |
+            <a href="{{ url_for('courses.assign_students', course_id=course.id) }}">Assign</a> |
+            <a href="{{ url_for('courses.remove_course', id=course.id) }}"
+                onclick="return confirm('Supprimer ce cours ?')">Delete</a>
+        </td>
     </tr>
-
     {% endfor %}
-
 </table>
 
+<div style="margin-top: 20px;">
+    {% if page > 1 %}
+    <a href="{{ url_for('courses.courses_list', page=page-1, search=search) }}">« Précédent</a>
+    {% endif %}
+
+    <span>Page {{ page }} / {{ total_pages }}</span>
+
+    {% if page < total_pages %} <a href="{{ url_for('courses.courses_list', page=page+1, search=search) }}">Suivant
+        »</a>
+        {% endif %}
+</div>
 {% endblock %}

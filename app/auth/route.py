@@ -1,7 +1,7 @@
-from flask import Blueprint, render_template, request, redirect, session, flash
+from flask import Blueprint, render_template, request, redirect, session, flash, url_for
 from .service import authenticate
 from .decorators import login_required
-from app.models import User
+from app.models import *
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 
@@ -36,4 +36,19 @@ def logout():
 @login_required
 def profile():
     user = User.query.get(session['user_id'])
-    return render_template('auth/profile.html', user=user)
+    
+    # On récupère le profil spécifique selon le rôle
+    teacher_profile = None
+    student_profile = None
+    
+    if user.role == 'teacher':
+        teacher_profile = Teacher.query.get(user.id)
+    elif user.role == 'student':
+        student_profile = Student.query.get(user.id)
+        
+    return render_template(
+        'auth/profile.html', 
+        user=user, 
+        teacher=teacher_profile, 
+        student=student_profile
+    )

@@ -11,82 +11,191 @@ courses_bp = Blueprint("courses", __name__, url_prefix="/courses")
 @courses_bp.route("/")
 @login_required
 def courses_list():
-
-    courses = list_courses()
-    teachers = list_teachers()
-    students = list_students()
+    page = request.args.get('page', 1, type=int)
+    search = request.args.get('search', '')
+    
+    # On utilise la nouvelle version paginée
+    data = list_courses(page=page, search=search)
+    
+    # On a toujours besoin des profs pour afficher les noms dans la liste
+    teachers = list_teachers() 
 
     return render_template(
         "courses/list.html",
-        courses=courses,
-        teachers=teachers,
-        students=students
+        courses=data['courses'], # On passe la liste réelle
+        total_pages=data['total_pages'],
+        page=data['page'],
+        search=search,
+        teachers=teachers
     )
 
 
 @courses_bp.route("/create", methods=["GET", "POST"])
 @login_required
 def create_course():
-
-    teachers = list_teachers()
+    # Préparation des données pour le formulaire (GET)
+    teachers_data = list_teachers()
+    # Gestion du format (dict si paginé, list sinon)
+    teachers = teachers_data['teachers'] if isinstance(teachers_data, dict) else teachers_data
 
     if request.method == "POST":
-
+        # RÉCUPÉRATION DES DONNÉES DU FORMULAIRE
         title = request.form.get("title")
         teacher_id = int(request.form.get("teacher_id"))
+        jour = request.form.get("jour")
+        heure = request.form.get("heure")
+        statut = request.form.get("statut", "Planifié")
 
-        add_course(title, teacher_id)
+        # VÉRIFICATION DES CONFLITS
+        conflit = check_conflit(teacher_id, jour, heure)
+        if conflit:
+            flash(f"Conflit ! L'enseignant a déjà le cours '{conflit['title']}' ce jour à cette heure.", "danger")
+            return render_template("courses/create.html", 
+                                 teachers=teachers, jours=JOURS, statuts=STATUTS)
 
-        flash("Cours ajouté avec succès", "success")
+        # APPEL AU SERVICE POUR CRÉATION EN BD
+        try:
+            add_course(title, teacher_id, jour, heure, statut)
+            flash(f"Le cours '{title}' a été créé avec succès.", "success")
+            return redirect(url_for("courses.courses_list"))
+        except Exception as e:
+            db.session.rollback()
+            flash(f"Erreur lors de la création : {str(e)}", "danger")
 
-        return redirect(url_for("courses.courses_list"))
-
-    return render_template("courses/create.html", teachers=teachers)
-
+    return render_template(
+        "courses/create.html",
+        teachers=teachers,
+        jours=JOURS,
+        statuts=STATUTS
+    )
 
 @courses_bp.route("/delete/<int:id>")
 @login_required
 def remove_course(id):
-
     delete_course(id)
-
     flash("Cours supprimé", "info")
-
     return redirect(url_for("courses.courses_list"))
 
 @courses_bp.route("/assign/<int:course_id>", methods=["GET", "POST"])
 @login_required
-def assign_student(course_id):
+def assign_students(course_id):
     course = get_course_by_id(course_id)
     if not course:
         flash("Cours introuvable", "error")
         return redirect(url_for("courses.courses_list"))
 
-    students = list_students()
+    # Étudiants pas encore inscrits à ce cours
+    data_students = list_students() 
+    all_students = data_students['students'] # <--- C'est ici que se trouve la liste
+    
+    students_disponibles = [
+        s for s in all_students if s["id"] not in course["student_ids"]
+    ]
+    students_disponibles = [
+        s for s in all_students if s["id"] not in course["student_ids"]
+    ]
 
     if request.method == "POST":
-        student_id = int(request.form.get("student_id"))
-        assign_student_to_course(course_id, student_id)
-        flash("Étudiant assigné au cours", "success")
+        # getlist récupère toutes les cases cochées
+        student_ids = [int(sid) for sid in request.form.getlist("student_ids")]
+
+        if not student_ids:
+            flash("Veuillez cocher au moins un étudiant.", "warning")
+            return render_template(
+                "courses/assign.html",
+                course=course,
+                students=students_disponibles
+            )
+
+        assign_multiple_students(course_id, student_ids)
+        flash(f"{len(student_ids)} étudiant(s) inscrit(s) avec succès !", "success")
         return redirect(url_for("courses.courses_list"))
 
-    return render_template("courses/assign.html", course=course, students=students)
+    return render_template(
+        "courses/assign.html",
+        course=course,
+        students=students_disponibles
+    )
+
+
+@courses_bp.route("/assign-multiple/<int:course_id>", methods=["GET", "POST"])
+@login_required
+def assign_multiple(course_id):
+    course = get_course_by_id(course_id)
+    if not course:
+        flash("Cours introuvable", "error")
+        return redirect(url_for("courses.courses_list"))
+
+    # Étudiants pas encore inscrits à ce cours
+    all_students = list_students()
+    students_disponibles = [
+        s for s in all_students if s["id"] not in course["student_ids"]
+    ]
+
+    if request.method == "POST":
+        # getlist récupère toutes les cases cochées
+        student_ids = [int(sid) for sid in request.form.getlist("student_ids")]
+
+        if not student_ids:
+            flash("Veuillez cocher au moins un étudiant.", "warning")
+            return render_template(
+                "courses/assign_multiple.html",
+                course=course,
+                students=students_disponibles
+            )
+
+        assign_multiple_students(course_id, student_ids)
+        flash(f"{len(student_ids)} étudiant(s) inscrit(s) avec succès !", "success")
+        return redirect(url_for("courses.courses_list"))
+
+    return render_template(
+        "courses/assign_multiple.html",
+        course=course,
+        students=students_disponibles
+    )
+
+
+@courses_bp.route("/statut/<int:course_id>", methods=["POST"])
+@login_required
+def changer_statut(course_id):
+    nouveau_statut = request.form.get("statut")
+    success = update_statut(course_id, nouveau_statut)
+
+    if success:
+        flash(f"Statut mis à jour : {nouveau_statut}", "success")
+    else:
+        flash("Statut invalide.", "danger")
+
+    return redirect(url_for("courses.courses_list"))
 
 @courses_bp.route("/details/<int:course_id>")
 @login_required
 def course_details(course_id):
+    # 1. Get the course (from cache list or DB)
     course = get_course_by_id(course_id)
     if not course:
         flash("Cours introuvable", "error")
         return redirect(url_for("courses.courses_list"))
 
-    teacher = next((t for t in list_teachers() if t["id"] == course['teacher_id']), None)
-
-    students = [s for s in list_students() if s["id"] in course['student_ids']]
+    # 2. FIX: Extract teachers list from the dictionary
+    teachers_data = list_teachers()
+    # Check if it's a dict (paginated) or a list
+    all_teachers = teachers_data['teachers'] if isinstance(teachers_data, dict) else teachers_data
+    
+    # 3. Find the specific teacher
+    teacher = next((t for t in all_teachers if t["id"] == course["teacher_id"]), None)
+    
+    # 4. Get student details
+    all_students_data = list_students()
+    all_students = all_students_data['students']
+    
+    # Filter students assigned to this course
+    students_assigned = [s for s in all_students if s["id"] in course["student_ids"]]
 
     return render_template(
         "courses/details.html",
         course=course,
         teacher=teacher,
-        students=students
+        students=students_assigned,
+        statuts=STATUTS
     )

@@ -4,12 +4,16 @@
 
 <h2>Teachers</h2>
 
+<form method="GET" action="{{ url_for('teachers.teachers_list') }}" style="margin-bottom: 20px;">
+    <input type="text" name="search" placeholder="Search by name or speciality..." value="{{ search }}">
+    <button type="submit">Search</button>
+    <a href="{{ url_for('teachers.teachers_list') }}">Reset</a>
+</form>
+
 <a href="{{ url_for('teachers.create_teacher') }}">Add Teacher</a>
 
-<table border="1">
-
+<table border="1" style="width: 100%; margin-top: 10px;">
     <tr>
-        <th>ID</th>
         <th>Name</th>
         <th>Email</th>
         <th>Speciality</th>
@@ -17,24 +21,32 @@
     </tr>
 
     {% for teacher in teachers %}
-
     <tr>
-
-        <td>{{ teacher.id }}</td>
         <td>{{ teacher.name }}</td>
         <td>{{ teacher.email }}</td>
         <td>{{ teacher.speciality }}</td>
-
         <td>
-            <a href="{{ url_for('teachers.delete_teacher_route', id=teacher.id) }}">
-                Delete
-            </a>
+            <a href="{{ url_for('teachers.delete_teacher_route', id=teacher.id) }}"
+                onclick="return confirm('Supprimer cet enseignant ?')">Delete</a>
         </td>
-
     </tr>
-
+    {% else %}
+    <tr>
+        <td colspan="5" style="text-align: center;">No teachers found.</td>
+    </tr>
     {% endfor %}
-
 </table>
+
+<div style="margin-top: 20px;">
+    {% if page > 1 %}
+    <a href="{{ url_for('teachers.teachers_list', page=page-1, search=search) }}">Précédent</a>
+    {% endif %}
+
+    <span>Page {{ page }} sur {{ total_pages }}</span>
+
+    {% if page < total_pages %} <a href="{{ url_for('teachers.teachers_list', page=page+1, search=search) }}">
+        Suivant</a>
+        {% endif %}
+</div>
 
 {% endblock %}

@@ -2,21 +2,28 @@
 
 {% block content %}
 
-<h2>Assign Student to Course: {{ course.title }}</h2>
+<h2>Inscrire plusieurs étudiants — {{ course.title }}</h2>
 
-<form action="{{ url_for('courses.assign_student', course_id=course.id) }}" method="post">
+<form method="POST" action="{{ url_for('courses.assign_students', course_id=course.id) }}">
 
-    <label>Select Student</label>
+    {% if students %}
+    <p>Cochez les étudiants à inscrire :</p>
+
+    {% for student in students %}
+    <div>
+        <input type="checkbox" name="student_ids" value="{{ student.id }}" id="s{{ student.id }}">
+        <label for="s{{ student.id }}">{{ student.name }}</label>
+    </div>
+    {% endfor %}
+
     <br>
+    <button type="submit">Inscrire les étudiants sélectionnés</button>
 
-    <select name="student_id" required>
-        {% for student in students %}
-        <option value="{{ student.id }}">{{ student.name }}</option>
-        {% endfor %}
-    </select>
+    {% else %}
+    <p>Tous les étudiants sont déjà inscrits à ce cours.</p>
+    {% endif %}
 
-    <br><br>
-    <button type="submit">Assign Student</button>
+    <br>
     <a href="{{ url_for('courses.courses_list') }}">Cancel</a>
 
 </form>

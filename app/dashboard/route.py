@@ -9,12 +9,15 @@ dashboard_bp = Blueprint("dashboard", __name__)
 @dashboard_bp.route("/")
 @login_required
 def dashboard():
-    total_students = len(list_students())
-    total_teachers = len(list_teachers())
-    total_courses = len(list_courses())
+    # On récupère les dictionnaires de données
+    # On peut mettre per_page=1 car on ne veut que le chiffre 'total'
+    students_data = list_students(page=1, per_page=1)
+    teachers_data = list_teachers(page=1, per_page=1)
+    courses_data = list_courses(page=1, per_page=1)
+    
     return render_template(
         "dashboard.html",
-        students=total_students,
-        teachers=total_teachers,
-        courses=total_courses
+        students=students_data['total'], # On utilise la clé 'total'
+        teachers=teachers_data['total'],
+        courses=courses_data['total']
     )

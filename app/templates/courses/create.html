@@ -4,37 +4,53 @@
 
 <h2>Create Course</h2>
 
-<form method="POST">
+<form method="POST" action="{{ url_for('courses.create_course') }}">
 
     <label>Course Title</label>
-
     <br>
-
-    <input type="text" name="title" required>
+    <input type="text" name="title" placeholder="Course title" required>
 
     <br><br>
 
     <label>Select Teacher</label>
-
     <br>
-
-    <select name="teacher_id">
-
+    <select name="teacher_id" required>
         {% for teacher in teachers %}
-
-        <option value="{{ teacher.id }}">
-            {{ teacher.name }}
-        </option>
-
+        <option value="{{ teacher.id }}">{{ teacher.name }}</option>
         {% endfor %}
-
     </select>
 
     <br><br>
 
-    <button type="submit">
-        Create Course
-    </button>
+    <label>Jour</label>
+    <br>
+    <select name="jour" required>
+        <option value="">-- Choisir un jour --</option>
+        {% for jour in jours %}
+        <option value="{{ jour }}">{{ jour }}</option>
+        {% endfor %}
+    </select>
+
+    <br><br>
+
+    <label>Heure</label>
+    <br>
+    <input type="time" name="heure" required>
+
+    <br><br>
+
+    <label>Statut</label>
+    <br>
+    <select name="statut">
+        {% for statut in statuts %}
+        <option value="{{ statut }}">{{ statut }}</option>
+        {% endfor %}
+    </select>
+
+    <br><br>
+
+    <button type="submit">Create Course</button>
+    <a href="{{ url_for('courses.courses_list') }}">Cancel</a>
 
 </form>
 
