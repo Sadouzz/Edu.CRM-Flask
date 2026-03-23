@@ -1,5 +1,5 @@
 from app import db
-from app.models import User, Teacher
+from app.models import *
 
 def list_teachers(page=1, per_page=5, search=None):
     """Récupère les enseignants avec pagination et recherche"""
@@ -55,12 +55,32 @@ def add_teacher(name, email, speciality, password="password123"):
         return None
 
 def delete_teacher(teacher_id):
-    user = User.query.get(teacher_id)
-    if user:
-        db.session.delete(user)
+    try:
+        # 1. Récupérer tous les cours associés à ce professeur
+        courses = Course.query.filter_by(teacher_id=teacher_id).all()
+        
+        for course in courses:
+            # 2. Supprimer les inscriptions des étudiants pour CHAQUE cours
+            CourseAssignment.query.filter_by(course_id=course.id).delete()
+            # 3. Supprimer le cours lui-même
+            db.session.delete(course)
+        
+        # 4. Supprimer l'entrée dans la table 'teachers'
+        teacher = Teacher.query.get(teacher_id)
+        if teacher:
+            db.session.delete(teacher)
+            
+        # 5. Supprimer l'entrée dans la table 'users'
+        user = User.query.get(teacher_id)
+        if user:
+            db.session.delete(user)
+            
         db.session.commit()
         return True
-    return False
+    except Exception as e:
+        db.session.rollback()
+        print(f"Erreur lors de la suppression du professeur : {e}")
+        return False
 
 def get_teacher_by_id(id):
     result = db.session.query(User, Teacher).join(Teacher, User.id == Teacher.id).filter(User.id == id).first()

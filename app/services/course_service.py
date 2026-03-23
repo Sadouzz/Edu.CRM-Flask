@@ -85,14 +85,23 @@ def update_statut(course_id, nouveau_statut):
     return False
 
 def delete_course(course_id):
-    """Supprime du cours en BD."""
+    """Supprime un cours et ses assignations associées."""
     course_db = Course.query.get(course_id)
     if course_db:
-        db.session.delete(course_db)
-        db.session.commit()
-        
-        # Sync la liste
-        sync_list_from_db()
+        try:
+            # 1. Supprimer manuellement les assignations liées
+            CourseAssignment.query.filter_by(course_id=course_id).delete()
+            
+            # 2. Supprimer le cours
+            db.session.delete(course_db)
+            db.session.commit()
+            
+            # Sync la liste mémoire
+            sync_list_from_db()
+        except Exception as e:
+            db.session.rollback()
+            print(f"Erreur lors de la suppression : {e}")
+            raise e
 
 # --- Fonctions utilitaires (Lecture seule sur la liste) ---
 def list_courses(page=1, per_page=5, search=None):
