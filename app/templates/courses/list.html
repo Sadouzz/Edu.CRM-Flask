@@ -10,29 +10,31 @@
             <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Gestion des cours</h1>
             <p class="text-gray-500 dark:text-gray-400 mt-1">{{ courses|length }} cours disponibles</p>
         </div>
+        {% if session.get('role') == 'admin' or session.get('role') == 'teacher' %}
         <a href="{{ url_for('courses.create_course') }}"
-           class="inline-flex items-center px-4 py-2 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-colors">
+            class="inline-flex items-center px-4 py-2 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-colors">
             <i class="fa-solid fa-plus mr-2"></i>
             Créer un cours
         </a>
+        {% endif %}
     </div>
 
-    
+
     <form method="GET" action="{{ url_for('courses.courses_list') }}" class="flex gap-2">
         <div class="relative flex-1">
-            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"></i>
-            <input type="text" name="search" placeholder="Rechercher un cours par titre..."
-                value="{{ search }}"
+            <i
+                class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"></i>
+            <input type="text" name="search" placeholder="Rechercher un cours par titre..." value="{{ search }}"
                 class="w-full pl-8 pr-4 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white">
         </div>
-        <button type="submit" 
-                class="px-4 py-1.5 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition-colors">
+        <button type="submit"
+            class="px-4 py-1.5 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition-colors">
             <i class="fa-solid fa-search mr-1"></i>
             Rechercher
         </button>
         {% if search %}
-        <a href="{{ url_for('courses.courses_list') }}" 
-        class="px-4 py-1.5 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
+        <a href="{{ url_for('courses.courses_list') }}"
+            class="px-4 py-1.5 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
             Effacer
         </a>
         {% endif %}
@@ -50,72 +52,98 @@
                 </div>
                 <div class="flex flex-col gap-2 ml-3">
                     <a href="{{ url_for('courses.course_details', course_id=course.id) }}"
-                       class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors text-sm">
+                        class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors text-sm">
                         Détails
                     </a>
+                    {% if session.get('role') == 'admin' or session.get('role') == 'teacher' %}
                     <a href="{{ url_for('courses.assign_students', course_id=course.id) }}"
-                       class="text-green-600 dark:text-green-400 hover:text-green-800 dark:hover:text-green-300 transition-colors text-sm">
+                        class="text-green-600 dark:text-green-400 hover:text-green-800 dark:hover:text-green-300 transition-colors text-sm">
                         Assigner
                     </a>
+                    {% endif %}
+                    {% if session.get('role') == 'admin'%}
                     <a href="{{ url_for('courses.remove_course', id=course.id) }}"
-                       onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce cours ?')"
-                       class="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 transition-colors text-sm">
+                        onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce cours ?')"
+                        class="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 transition-colors text-sm">
                         Supprimer
                     </a>
+                    {% endif %}
                 </div>
             </div>
         </div>
         {% else %}
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-8 text-center">
+        <div
+            class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-8 text-center">
             <div class="flex flex-col items-center">
                 <i class="fa-regular fa-folder-open text-4xl mb-3 text-gray-400"></i>
                 <p class="text-gray-500 dark:text-gray-400">Aucun cours trouvé</p>
-                <a href="{{ url_for('courses.create_course') }}" class="mt-3 text-primary-600 dark:text-primary-400 hover:text-primary-700">
+                {% if session.get('role') == 'admin' or session.get('role') == 'teacher' %}
+                <a href="{{ url_for('courses.create_course') }}"
+                    class="mt-3 text-primary-600 dark:text-primary-400 hover:text-primary-700">
                     Créer votre premier cours
                 </a>
+                {% endif %}
             </div>
         </div>
         {% endfor %}
     </div>
 
-    
-    <div class="desktop-table bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+
+    <div
+        class="desktop-table bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
         <table class="w-full">
             <thead class="bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
                 <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">ID</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Titre</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Enseignant</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Étudiants</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
+                    <th
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                        ID</th>
+                    <th
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                        Titre</th>
+                    <th
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                        Enseignant</th>
+                    <th
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                        Étudiants</th>
+                    <th
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                        Actions</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                 {% for course in courses %}
                 <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">{{ course.id }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{{ course.title }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{{ course.teacher_id }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{{ course.student_ids|length }}</td>
-                    
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{{
+                        course.title }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{{
+                        course.teacher_id }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{{
+                        course.student_ids|length }}</td>
+
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <div class="flex items-center gap-4">
                             <a href="{{ url_for('courses.course_details', course_id=course.id) }}"
-                            class="flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition">
+                                class="flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition">
                                 Détails
                             </a>
+                            {% if session.get('role') == 'admin' or session.get('role') == 'teacher' %}
                             <a href="{{ url_for('courses.assign_students', course_id=course.id) }}"
-                            class="flex items-center text-green-600 dark:text-green-400 hover:text-green-800 dark:hover:text-green-300 transition">
+                                class="flex items-center text-green-600 dark:text-green-400 hover:text-green-800 dark:hover:text-green-300 transition">
                                 Assigner
                             </a>
+                            {% endif %}
+                            {% if session.get('role') == 'admin' %}
                             <a href="{{ url_for('courses.remove_course', id=course.id) }}"
-                            onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce cours ?')"
-                            class="flex items-center text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 transition">
+                                onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce cours ?')"
+                                class="flex items-center text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 transition">
                                 Supprimer
                             </a>
+                            {% endif %}
                         </div>
                     </td>
-                    
+
                 </tr>
                 {% else %}
                 <tr>
@@ -123,9 +151,12 @@
                         <div class="flex flex-col items-center">
                             <i class="fa-regular fa-folder-open text-4xl mb-3"></i>
                             <p>Aucun cours trouvé</p>
-                            <a href="{{ url_for('courses.create_course') }}" class="mt-3 text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300">
+                            {% if session.get('role') == 'admin' or session.get('role') == 'teacher' %}
+                            <a href="{{ url_for('courses.create_course') }}"
+                                class="mt-3 text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300">
                                 Créer votre premier cours
                             </a>
+                            {% endif %}
                         </div>
                     </td>
                 </tr>
@@ -137,42 +168,42 @@
     {% if total_pages > 1 %}
     <div class="flex justify-center gap-2 mt-4">
         {% if page > 1 %}
-        <a href="{{ url_for('courses.courses_list', page=page-1, search=search) }}" 
-        class="px-3 py-1 border rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 dark:border-gray-600 dark:text-gray-300 transition">
+        <a href="{{ url_for('courses.courses_list', page=page-1, search=search) }}"
+            class="px-3 py-1 border rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 dark:border-gray-600 dark:text-gray-300 transition">
             Précédent
         </a>
         {% endif %}
-        
+
         <span class="px-3 py-1 text-gray-700 dark:text-gray-300">
             Page {{ page }} / {{ total_pages }}
         </span>
-        
-        {% if page < total_pages %}
-        <a href="{{ url_for('courses.courses_list', page=page+1, search=search) }}" 
-        class="px-3 py-1 border rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 dark:border-gray-600 dark:text-gray-300 transition">
+
+        {% if page < total_pages %} <a href="{{ url_for('courses.courses_list', page=page+1, search=search) }}"
+            class="px-3 py-1 border rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 dark:border-gray-600 dark:text-gray-300 transition">
             Suivant
-        </a>
-        {% endif %}
+            </a>
+            {% endif %}
     </div>
     {% endif %}
 </div>
 
 <style>
-   
     @media (max-width: 640px) {
         .desktop-table {
             display: none;
         }
+
         .mobile-cards {
             display: block;
         }
     }
-    
+
 
     @media (min-width: 641px) {
         .desktop-table {
             display: block;
         }
+
         .mobile-cards {
             display: none;
         }
