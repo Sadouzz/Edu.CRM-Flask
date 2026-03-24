@@ -46,7 +46,7 @@
             <div class="flex justify-between items-start">
                 <div class="flex-1">
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ course.title }}</h3>
-                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Enseignant ID: {{ course.teacher_id }}</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Enseignant ID: {{ course.teacher_name }}</p>
                     <p class="text-sm text-gray-500 dark:text-gray-400">Étudiants: {{ course.student_ids|length }}</p>
                     <p class="text-xs text-gray-400 dark:text-gray-500 mt-2">ID: {{ course.id }}</p>
                 </div>
@@ -118,7 +118,7 @@
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{{
                         course.title }}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{{
-                        course.teacher_id }}</td>
+                        course.teacher_name }}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{{
                         course.student_ids|length }}</td>
 

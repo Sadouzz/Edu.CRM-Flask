@@ -42,12 +42,6 @@ def create_course():
         heure = request.form.get("heure")
         statut = request.form.get("statut", "Planifié")
 
-        conflit = check_conflit(teacher_id, jour, heure)
-        if conflit:
-            flash(f"Conflit ! L'enseignant a déjà le cours '{conflit['title']}' ce jour à cette heure.", "danger")
-            return render_template("courses/create.html", 
-                                 teachers=teachers, jours=JOURS, statuts=STATUTS)
-
         try:
             add_course(title, teacher_id, jour, heure, statut)
             flash(f"Le cours '{title}' a été créé avec succès.", "success")

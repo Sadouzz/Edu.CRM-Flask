@@ -66,17 +66,6 @@ def assign_multiple_students(course_id, student_ids):
         print(f"Erreur : {e}")
         return False
 
-def update_statut(course_id, nouveau_statut):
-    """Modifie le statut directement en BD."""
-    course_db = Course.query.get(course_id)
-    if course_db and nouveau_statut in STATUTS:
-        course_db.statut = nouveau_statut
-        db.session.commit()
-        
-        sync_list_from_db()
-        return True
-    return False
-
 def delete_course(course_id):
     """Supprime un cours et ses assignations associées."""
     course_db = Course.query.get(course_id)
@@ -140,15 +129,4 @@ def get_course_by_id(course_id):
             "heure": c.heure,
             "statut": c.statut
         }
-    return None
-
-def check_conflit(teacher_id, jour, heure, exclude_id=None):
-    if not courses: sync_list_from_db()
-    for course in courses:
-        if exclude_id and course["id"] == exclude_id:
-            continue
-        if (course["teacher_id"] == teacher_id and 
-            course["jour"] == jour and 
-            course["heure"] == heure):
-            return course
     return None
